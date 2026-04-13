@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biography</title>
+    <title>Personal Statement</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@300;500;900&display=swap" rel="stylesheet">
     
@@ -15,7 +15,7 @@
             --blue-cyan: #00ffff;
             --blue-glow: rgba(0, 210, 255, 0.4);
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
-            --ig-red: #ff3040; /* Instagram 經典紅 */
+            --ig-red: #ff3040; 
         }
 
         body {
@@ -63,7 +63,6 @@
         .action-icon { cursor: pointer; transition: 0.2s; color: #efefef; display: inline-block; }
         .action-icon:hover { color: var(--blue-neon); }
 
-        /* 愛心變紅的樣式與動畫 */
         .action-icon#heart-btn.liked {
             color: var(--ig-red);
             animation: heartBeat 0.3s var(--ease);
@@ -83,6 +82,8 @@
             border-top: 1px solid #262626;
             padding: 14px;
             background-color: var(--ig-dark);
+            max-height: 400px;
+            overflow-y: auto;
         }
         .comment-item {
             display: flex;
@@ -105,9 +106,10 @@
             justify-content: space-between;
         }
         .comment-input-area input {
-            background: transparent; border: none; color: #fff; width: 80%; outline: none;
+            background: transparent; border: none; color: #fff; width: 85%; outline: none;
         }
-        .post-btn { color: var(--blue-neon); font-weight: 700; cursor: pointer; opacity: 0.5; }
+        .post-btn { color: var(--blue-neon); font-weight: 700; cursor: pointer; opacity: 1; transition: 0.3s; }
+        .post-btn:hover { opacity: 0.7; }
 
         .btn-back {
             display: block; text-align: center; margin: 40px auto;
@@ -115,6 +117,32 @@
             letter-spacing: 5px; transition: 0.3s;
         }
         .btn-back:hover { color: var(--blue-neon); }
+
+        @keyframes planeFlyAway {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            30% { transform: translate(100px, -50px) scale(1.5) rotate(-15deg); opacity: 0.8; }
+            100% { transform: translate(500px, -200px) scale(0) rotate(-30deg); opacity: 0; }
+        }
+
+        @keyframes planeFlyBack {
+            0% { transform: translate(-100vw, 100px) scale(2) rotate(15deg); opacity: 0; }
+            50% { transform: translate(0, -50px) scale(4) rotate(0deg); opacity: 1; }
+            100% { transform: translate(100vw, -150px) scale(2) rotate(-15deg); opacity: 0; }
+        }
+
+        .fly-away {
+            animation: planeFlyAway 1.5s forwards var(--ease);
+        }
+
+        .fly-screen-over {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            font-size: 200px;
+            z-index: 10000;
+            pointer-events: none;
+            animation: planeFlyBack 2.3s forwards linear;
+        }
     </style>
 </head>
 <body>
@@ -136,7 +164,7 @@
             <div class="post-actions">
                 <span class="action-icon" id="heart-btn">❤</span>
                 <span class="action-icon">💬</span>
-                <span class="action-icon">✈</span>
+                <span class="action-icon" id="plane-btn">✈</span>
             </div>
 
             <div class="post-caption">
@@ -159,15 +187,14 @@
                 <div class="hashtag" style="margin-top:10px;">#FullStack #PU_CSIM #CodingLife #DreamBig</div>
             </div>
 
-            <div class="comments-section">
-                <div class="comment-item" style="animation-delay: 0.2s;">
+            <div class="comments-section" id="comments-container">
+                 <div class="comment-item" style="animation-delay: 0.2s;">
                     <div class="comment-content">
                         <span class="comment-user">year_01_goal</span>
                         <span class="comment-text">打好紮實基礎。熟練 Python 與 Java 邏輯，掌握現代網頁設計與 SQL 資料庫基礎，並精進 Git 協作。 </span>
                         <span class="comment-time">52 WEEKS AGO</span>
                     </div>
                 </div>
-
                 <div class="comment-item" style="animation-delay: 0.4s;">
                     <div class="comment-content">
                         <span class="comment-user">year_03_goal</span>
@@ -175,7 +202,6 @@
                         <span class="comment-time">24 WEEKS AGO</span>
                     </div>
                 </div>
-
                 <div class="comment-item" style="animation-delay: 0.6s;">
                     <div class="comment-content">
                         <span class="comment-user">year_10_goal</span>
@@ -183,30 +209,84 @@
                         <span class="comment-time">10 HOURS AGO</span>
                     </div>
                 </div>
+                
             </div>
+            
 
             <div class="comment-input-area">
-                <input type="text" placeholder="Add a comment...">
-                <span class="post-btn">Post</span>
+                <input type="text" id="comment-input" placeholder="Add a comment...">
+                <span class="post-btn" id="post-btn">Post</span>
             </div>
         </div>
 
-        <a href="../good.html" class="btn-back">EXIT</a>
+        <a href="../index.html" class="btn-back">EXIT</a>
     </div>
-
-    <footer style="padding: 40px 0; text-align: center; color: #333; font-size: 12px; letter-spacing: 2px;">
-        ©HUANG SHIH-HAO PORTFOLIO. ALL RIGHTS RESERVED.
-    </footer>
 
     <script>
         const heartBtn = document.getElementById('heart-btn');
+        heartBtn.addEventListener('click', () => heartBtn.classList.toggle('liked'));
 
-        heartBtn.addEventListener('click', function() {
-            this.classList.toggle('liked');
+        const postBtn = document.getElementById('post-btn');
+        const commentInput = document.getElementById('comment-input');
+        const commentsContainer = document.getElementById('comments-container');
+
+        function addComment() {
+            const text = commentInput.value.trim();
             
-            console.log("Heart status toggled!");
+            if (text !== "") {
+                const newComment = document.createElement('div');
+                newComment.className = 'comment-item';
+                newComment.style.opacity = '1';
+                
+                newComment.innerHTML = `
+                    <div class="comment-content">
+                        <span class="comment-user">Guest</span>
+                        <span class="comment-text">${text}</span>
+                        <span class="comment-time">JUST NOW</span>
+                    </div>
+                `;
+
+                commentsContainer.appendChild(newComment);
+                
+                commentsContainer.scrollTop = commentsContainer.scrollHeight;
+
+                commentInput.value = "";
+            }
+        }
+
+        postBtn.addEventListener('click', addComment);
+
+        commentInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addComment();
+            }
+        });
+
+        const planeBtn = document.getElementById('plane-btn');
+
+        planeBtn.addEventListener('click', () => {
+            planeBtn.classList.add('fly-away');
+
+            setTimeout(() => {
+                const bigPlane = document.createElement('div');
+                bigPlane.innerText = '✈';
+                bigPlane.className = 'fly-screen-over';
+                document.body.appendChild(bigPlane);
+
+                bigPlane.addEventListener('animationend', () => {
+                    bigPlane.remove();
+                });
+            }, 400);
+
+            setTimeout(() => {
+                planeBtn.classList.remove('fly-away');
+                planeBtn.style.opacity = '0';
+                setTimeout(() => {
+                    planeBtn.style.transition = 'opacity 0.5s';
+                    planeBtn.style.opacity = '1';
+                }, 100);
+            }, 2000);
         });
     </script>
-
 </body>
 </html>

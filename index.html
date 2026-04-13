@@ -8,6 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@300;500;900&display=swap" rel="stylesheet">
     
     <style>
+        
+        body.loading {
+            overflow: hidden;
+        }
         :root {
             --main-bg: #0a0a0a;
             --sub-bg: #111111;  
@@ -146,11 +150,38 @@
         }
 
         .hero {
-            height: 100vh; display: flex; align-items: center; padding-left: 10%;
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            padding-left: 10%;
+            position: relative;
+            overflow: hidden;
             background: linear-gradient(90deg, #000 20%, transparent 100%), 
                         url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070') no-repeat center center/cover;
         }
-        .hero-content h1 { font-family: 'Oswald', sans-serif; font-size: 8rem; line-height: 0.85; font-weight: 900; text-transform: uppercase; }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 210, 255, 0.05) 50%);
+            background-size: 100% 4px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .hero-content h1 { 
+            font-family: 'Oswald', sans-serif; 
+            font-size: 8rem; 
+            line-height: 0.85; 
+            font-weight: 900; 
+            text-transform: uppercase;
+            opacity: 0;
+            filter: blur(15px);
+            letter-spacing: 15px;
+            transform: translateX(-30px);
+            animation: titleReveal 1.2s var(--ease) forwards;
+            animation-delay: 1.5s;
+        }
         .hero-content p { font-size: 1.1rem; letter-spacing: 10px; color: var(--blue-neon); margin-top: 1rem; font-weight: 900; }
 
         .section-header { margin: 100px 0 60px; position: relative; }
@@ -183,7 +214,7 @@
 
         .rotating-photo { width: 100%; height: 100%; object-fit: cover; animation: self-rotate 20s linear infinite; }
         @keyframes self-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } 
-.content-wrapper {
+        .content-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -202,11 +233,161 @@
             transition: all 0.4s ease;
             text-transform: uppercase;
         }
+
+        .card-grid-item {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-grid-item.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .col-md-4:nth-child(2) .card-grid-item { transition-delay: 0.2s; }
+        .col-md-4:nth-child(3) .card-grid-item { transition-delay: 0.4s; }
+
+        @keyframes titleReveal {
+            to {
+                opacity: 1;
+                filter: blur(0);
+                letter-spacing: 0px;
+                transform: translateX(0);
+            }
+        }
+
+        .side-deco {
+            position: absolute;
+            right: 8%;
+            top: 45%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            z-index: 2;
+        }
+
+        .deco-line {
+            width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue-neon));
+            opacity: 0;
+            transform: translateX(50px);
+            animation: lineFadeIn 1s var(--ease) forwards;
+        }
+
+        .deco-line:nth-child(1) { animation-delay: 1.8s; }
+        .deco-line:nth-child(2) { animation-delay: 2.0s; width: 180px; transform: translateX(80px); }
+        .deco-line:nth-child(3) { animation-delay: 2.2s; width: 240px; transform: translateX(110px); }
+
+        @keyframes lineFadeIn {
+            to { opacity: 0.5; transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
+    <canvas id="bg-canvas" style="position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.4;"></canvas>
 
-    <div class="scrolling-watermark" id="watermark">PORTFOLIO ❤</div>
+    <style>
+        .hero {
+            background: transparent !important;
+        }
+    </style>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = '#00d2ff';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+
+    <div id="loading-screen" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100vh;
+    background-color: #050505;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 9999;
+    transition: opacity 1s var(--ease), visibility 1s;
+">
+    <div class="loader-wrapper" style="position: relative; width: 280px; height: 280px;">
+        <div id="circular-loader" style="
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--blue-neon) 0%, #1a1a1a 0%);
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 50px rgba(0, 210, 255, 0.2);
+            transition: background 0.1s linear;
+        ">
+            <div style="
+                width: 94%; height: 94%;
+                background-color: #050505;
+                border-radius: 50%;
+                display: flex; flex-direction: column;
+                justify-content: center; align-items: center;
+                border: 1px solid rgba(0, 210, 255, 0.1);
+            ">
+                <div id="load-percent" style="
+                    font-family: 'Oswald', sans-serif;
+                    font-size: 4.5rem;
+                    font-weight: 900;
+                    color: var(--blue-neon);
+                    text-shadow: 0 0 20px var(--blue-glow), 0 0 40px var(--blue-glow);
+                    line-height: 1;
+                ">0</div>
+                
+                <div style="
+                    font-family: 'Oswald', sans-serif;
+                    font-size: 0.8rem; 
+                    letter-spacing: 6px; 
+                    color: var(--blue-neon); 
+                    margin-top: 10px;
+                    opacity: 0.8;
+                    text-transform: uppercase;
+                ">Thinking...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <style>
+    @keyframes load-anim {
+        0% { left: -100%; }
+        50% { left: 0; }
+        100% { left: 100%; }
+    }
+    </style>
+
+    <div class="scrolling-watermark" id="watermark">迷子でもいい</div>
 
     <div class="nav-system" id="navSystem">
         <div class="menu-btn" id="openBtn">
@@ -230,6 +411,12 @@
     </div>
 
     <header class="hero">
+        <div class="side-deco">
+            <div class="deco-line"></div>
+            <div class="deco-line"></div>
+            <div class="deco-line"></div>
+        </div>
+
         <div class="hero-content">
             <p>PU CSIM / STUDENT</p>
             <h1>HUANG<br>SHIH-HAO<br>黃士豪</h1>
@@ -242,15 +429,16 @@
             <h2>Explore Projects</h2>
             <div class="sub-title">項目導覽</div>
         </div>
+        
         <div class="row g-0">
             <div class="col-md-4">
-                <a href="templates/Holland_code.html" class="card-grid-item"><span class="card-index">01</span><h3 class="card-title">Holland Code</h3><p>了解內特質與職場優勢分析。</p></a>
+                <a href="templates/Holland_code.html" class="card-grid-item"><span class="card-index">01</span><h3 class="card-title">Holland<br>Code</h3><p>了解內特質與職場優勢分析。</p></a>
             </div>
             <div class="col-md-4">
-                <a href="templates/work.html" class="card-grid-item"><span class="card-index">02</span><h3 class="card-title">Job Analysis</h3><p>MIS資訊工程師 職位進行深入分析。</p></a>
+                <a href="templates/work.html" class="card-grid-item"><span class="card-index">02</span><h3 class="card-title">Job<br>Analysis</h3><p>MIS資訊工程師 職位進行深入分析。</p></a>
             </div>
             <div class="col-md-4">
-                <a href="templates/mySelf.html" class="card-grid-item"><span class="card-index">03</span><h3 class="card-title">Biography</h3><p>個人簡歷及未來十年學習成長計畫。</p></a>
+                <a href="templates/mySelf.html" class="card-grid-item"><span class="card-index">03</span><h3 class="card-title">Personal<br>Statement</h3><p>個人簡歷及未來十年學習成長計畫。</p></a>
             </div>
         </div>
     </main>
@@ -338,6 +526,54 @@
                 overlay.style.clipPath = `circle(0% at 50% 100%)`;
                 photoCaption.style.opacity = 0;
             }
+        });
+        document.body.classList.add('loading');
+
+        function startLoading() {
+            const loader = document.getElementById('loading-screen');
+            const circle = document.getElementById('circular-loader');
+            const percentText = document.getElementById('load-percent');
+            
+            let progress = 0;
+            
+            const interval = setInterval(() => {
+                let increment = Math.floor(Math.random() * 3) + 1;
+                progress += increment;
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        loader.style.visibility = 'hidden';
+                        document.body.classList.remove('loading');
+                    }, 800);
+                }
+                
+                percentText.innerText = progress;
+                circle.style.background = `conic-gradient(var(--blue-neon) ${progress}%, #1a1a1a ${progress}%)`;
+                
+            }, 40); 
+        }
+
+        window.addEventListener('load', startLoading);
+
+        const observerOptions = {
+            threshold: 0.2
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card-grid-item').forEach(card => {
+            observer.observe(card);
         });
     </script>
 </body>
