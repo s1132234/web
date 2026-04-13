@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黃士豪 Personal Site</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@300;500;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --main-bg: #0a0a0a;
+            --sub-bg: #111111;  
+            --blue-deep: #001a33;    
+            --blue-neon: #00d2ff;    
+            --blue-cyan: #00ffff;    
+            --blue-glow: rgba(0, 210, 255, 0.6);
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            background-color: var(--main-bg);
+            color: #fff;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0; padding: 0; overflow-x: hidden;
+        }
+
+        .scrolling-watermark {
+            position: fixed;
+            top: 25%;
+            left: -5%;
+            font-family: 'Oswald', sans-serif;
+            font-size: 15vw;
+            color: rgba(0, 210, 255, 0.03);
+            z-index: -1;
+            white-space: nowrap;
+            pointer-events: none;
+            text-transform: uppercase;
+            font-weight: 900;
+            will-change: transform;
+        }
+
+        .nav-system {
+            position: fixed;
+            top: 0; right: 0;
+            width: 0; height: 0;
+            z-index: 5000;
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 40px; right: 40px;
+            width: 60px; height: 60px;
+            cursor: pointer;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+
+            background: rgba(0, 26, 51, 0.4); 
+            backdrop-filter: blur(10px);
+            
+            border: 2px solid #003366; 
+            border-radius: 50%;
+            z-index: 2200;
+            transition: all 0.6s var(--ease);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .menu-btn:hover {
+            background: rgba(0, 210, 255, 0.1);
+            border-color: var(--blue-neon);
+            box-shadow: 0 0 20px var(--blue-glow);
+            transform: scale(1.05);
+        }
+        .menu-btn.hide { opacity: 0; transform: scale(0) rotate(180deg); pointer-events: none; }
+        .hamburger-line { 
+            width: 24px; 
+            height: 2px; 
+            background-color: #b3e5fc;
+            margin: 3px 0; 
+        }
+
+        .big-circle {
+            position: absolute;
+            top: -200px; right: -200px;
+            width: 950px; height: 950px;
+            background: radial-gradient(circle at 70% 30%, var(--blue-deep) 0%, #0d0d0d 60%, #000 100%);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 50%;
+            transform-origin: center center;
+            
+            transform: scale(0) rotate(-180deg);
+            opacity: 0;
+            transition: transform 0.9s var(--ease), opacity 0.6s ease;
+            
+            z-index: 2100;
+            display: flex; justify-content: flex-start; align-items: center;
+            box-shadow: -50px 50px 100px rgba(0,0,0,0.9);
+            pointer-events: none;
+        }
+
+        .active .big-circle {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .big-circle.fade-out-mode {
+            transform: scale(1) rotate(0deg) !important; 
+            opacity: 0 !important;
+            filter: blur(40px) saturate(200%);
+            transition: opacity 0.8s ease, filter 0.8s ease !important;
+        }
+
+        .close-x {
+            position: absolute;
+            top: 260px; right: 260px;
+            width: 40px; height: 40px;
+            cursor: pointer; z-index: 2300;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; transform: scale(0) rotate(-90deg);
+            transition: all 0.8s var(--ease) 0.3s;
+        }
+        .active .close-x { opacity: 1; transform: scale(1) rotate(0deg); pointer-events: auto; }
+        .x-line { position: absolute; width: 25px; height: 2px; filter: drop-shadow(0 0 5px var(--blue-glow)); }
+        .x-line-1 { background-color: var(--blue-neon); transform: rotate(45deg); }
+        .x-line-2 { background-color: var(--blue-cyan); transform: rotate(-45deg); }
+
+        .menu-content {
+            list-style: none;
+            padding-left: 180px;
+            margin-top: 100px;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.4s ease 0.6s;
+        }
+        .active .menu-content { opacity: 1; }
+
+        .menu-item { margin: 40px 0; }
+        .menu-item a {
+            font-family: 'Oswald', sans-serif; font-size: 3.8rem; color: #fff;
+            text-decoration: none; font-weight: 700; letter-spacing: 5px;
+            transition: 0.3s var(--ease); display: inline-block;
+        }
+        .menu-item a:hover { 
+            color: var(--blue-cyan);
+            transform: translateX(20px);
+            text-shadow: 0 0 10px var(--blue-neon), 0 0 20px var(--blue-neon);
+        }
+
+        .hero {
+            height: 100vh; display: flex; align-items: center; padding-left: 10%;
+            background: linear-gradient(90deg, #000 20%, transparent 100%), 
+                        url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070') no-repeat center center/cover;
+        }
+        .hero-content h1 { font-family: 'Oswald', sans-serif; font-size: 8rem; line-height: 0.85; font-weight: 900; text-transform: uppercase; }
+        .hero-content p { font-size: 1.1rem; letter-spacing: 10px; color: var(--blue-neon); margin-top: 1rem; font-weight: 900; }
+
+        .section-header { margin: 100px 0 60px; position: relative; }
+        .section-header h2 { font-family: 'Oswald', sans-serif; font-size: 5rem; font-weight: 900; color: transparent; -webkit-text-stroke: 1px #333; }
+        .section-header .sub-title { position: absolute; top: 2.5rem; left: 5px; font-size: 1.5rem; font-weight: 700; }
+
+        .card-grid-item { background-color: var(--sub-bg); border: 1px solid #222; padding: 4rem 2rem; text-decoration: none; color: white; display: block; transition: 0.4s; }
+        .card-grid-item:hover { background-color: var(--blue-neon); color: #000; transform: translateY(-10px); box-shadow: 0 10px 30px var(--blue-glow); }
+        .card-index { font-family: 'Oswald', sans-serif; font-size: 1.2rem; margin-bottom: 2rem; display: block; color: var(--blue-neon); }
+        .card-grid-item:hover .card-index { color: #000; }
+        .card-title { font-size: 2rem; font-weight: 900; text-transform: uppercase; }
+
+        footer { padding: 80px 0; text-align: center; border-top: 1px solid #222; font-size: 0.7rem; letter-spacing: 3px; color: #555; }
+        .scroll-reveal-container { position: relative; height: 300vh; margin-top: 100px; }
+        
+        .transition-overlay {
+            position: sticky; top: 0; width: 100%; height: 100vh;
+            background: radial-gradient(circle at 50% 100%, var(--blue-deep) 0%, #000 100%);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 3000;
+            clip-path: circle(0% at 50% 100%); 
+            pointer-events: none; will-change: clip-path;
+        }
+
+        .photo-circle-container {
+            width: 380px; height: 380px; border-radius: 50%; overflow: hidden;
+            border: 4px solid var(--blue-neon); box-shadow: 0 0 50px var(--blue-glow);
+            transform: translateY(150px); 
+        }
+
+        .rotating-photo { width: 100%; height: 100%; object-fit: cover; animation: self-rotate 20s linear infinite; }
+        @keyframes self-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } 
+.content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .photo-caption {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--blue-neon);
+            letter-spacing: 12px;
+            text-shadow: 0 0 20px var(--blue-glow);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scrolling-watermark" id="watermark">PORTFOLIO ❤</div>
+
+    <div class="nav-system" id="navSystem">
+        <div class="menu-btn" id="openBtn">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </div>
+
+        <div class="big-circle" id="circleMenu">
+            <div class="close-x" id="closeBtn">
+                <div class="x-line x-line-1"></div>
+                <div class="x-line x-line-2"></div>
+            </div>
+            <ul class="menu-content">
+                <li class="menu-item"><a href="https://github.com/s1132234" target="_blank" rel="noopener noreferrer">01 / Github</a></li>
+                <li class="menu-item"><a href="https://www.instagram.com/_h._4how/" target="_blank" rel="noopener noreferrer">02 / Instagram</a></li>
+                <li class="menu-item"><a href="https://discord.gg/JHpDgcwBQZ" target="_blank" rel="noopener noreferrer">03 / Discord</a></li>
+
+            </ul>
+        </div>
+    </div>
+
+    <header class="hero">
+        <div class="hero-content">
+            <p>PU CSIM / STUDENT</p>
+            <h1>HUANG<br>SHIH-HAO<br>黃士豪</h1>
+            <p>個人簡介</p>
+        </div>
+    </header>
+
+    <main class="container py-5">
+        <div class="section-header">
+            <h2>Explore Projects</h2>
+            <div class="sub-title">項目導覽</div>
+        </div>
+        <div class="row g-0">
+            <div class="col-md-4">
+                <a href="templates/Holland_code.html" class="card-grid-item"><span class="card-index">01</span><h3 class="card-title">Holland Code</h3><p>了解內特質與職場優勢分析。</p></a>
+            </div>
+            <div class="col-md-4">
+                <a href="templates/work.html" class="card-grid-item"><span class="card-index">02</span><h3 class="card-title">Job Analysis</h3><p>MIS資訊工程師 職位進行深入分析。</p></a>
+            </div>
+            <div class="col-md-4">
+                <a href="templates/mySelf.html" class="card-grid-item"><span class="card-index">03</span><h3 class="card-title">Biography</h3><p>個人簡歷及未來十年學習成長計畫。</p></a>
+            </div>
+        </div>
+    </main>
+
+    </main>
+
+        <div class="scroll-reveal-container" id="triggerSection">
+            <div class="transition-overlay" id="overlay">
+                <div class="content-wrapper">
+                    <div class="photo-circle-container" id="photoContainer">
+                        <img src="static/myself.jpg" alt="Myself" class="rotating-photo">
+                    </div>
+                    <div class="photo-caption" id="photoCaption">
+                        努力到極限不成功也很難
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <footer><p>©HUANG SHIH-HAO PORTFOLIO. ALL RIGHTS RESERVED.</p></footer>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);            
+            const watermark = document.getElementById('watermark');
+            const moveAmount = scrollPercent * 150;
+            watermark.style.transform = `translateX(${moveAmount}px)`;
+        });
+
+        const navSystem = document.getElementById('navSystem');
+        const openBtn = document.getElementById('openBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const circleMenu = document.getElementById('circleMenu');
+
+        openBtn.addEventListener('click', () => {
+            circleMenu.classList.remove('fade-out-mode');
+            openBtn.classList.add('hide');
+            navSystem.classList.add('active');
+        });
+
+        const closeSequence = () => {
+            circleMenu.classList.add('fade-out-mode');
+            navSystem.classList.remove('active');
+            setTimeout(() => {
+                circleMenu.classList.remove('fade-out-mode');
+                openBtn.classList.remove('hide');
+            }, 800); 
+        };
+
+        closeBtn.addEventListener('click', closeSequence);
+        document.querySelectorAll('.menu-item a').forEach(link => {
+            link.addEventListener('click', closeSequence);
+        });
+        const overlay = document.getElementById('overlay');
+        const triggerSection = document.getElementById('triggerSection');
+        const photoCaption = document.getElementById('photoCaption');
+
+        window.addEventListener('scroll', () => {
+            const sectionOffset = triggerSection.offsetTop;
+            const sectionHeight = triggerSection.offsetHeight;
+            const scrollPos = window.scrollY;
+            const windowHeight = window.innerHeight;
+
+            let progress = (scrollPos - sectionOffset) / (sectionHeight - windowHeight);
+            progress = Math.max(0, Math.min(1, progress));
+
+            if (progress > 0 && progress < 1) {
+                let circleSize = 0;
+                let photoY = 150; 
+
+                if (progress <= 0.5) {
+                    circleSize = (progress * 2) * 200;
+                    photoY = 150 - (progress * 2 * 150); 
+                    photoCaption.style.opacity = progress * 2;
+                    photoCaption.style.transform = `translateY(${30 - (progress * 2 * 30)}px)`;
+                } else {
+                    circleSize = (1 - (progress - 0.5) * 2) * 200;
+                    photoY = (progress - 0.5) * 2 * 150;
+                    photoCaption.style.opacity = 1 - (progress - 0.5) * 2;
+                }
+
+                overlay.style.clipPath = `circle(${circleSize}% at 50% 100%)`;
+                photoContainer.style.transform = `translateY(${photoY}px) rotate(${scrollPos * 0.1}deg)`;
+            } else {
+                overlay.style.clipPath = `circle(0% at 50% 100%)`;
+                photoCaption.style.opacity = 0;
+            }
+        });
+    </script>
+</body>
+</html>

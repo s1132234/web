@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holland Code</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Sans+TC:wght@300;500;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --main-bg: #0a0a0a;
+            --sub-bg: #111111;  
+            --blue-deep: #001a33;    
+            --blue-neon: #00d2ff;    
+            --blue-cyan: #00ffff;    
+            --blue-glow: rgba(0, 210, 255, 0.6);
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            background-color: var(--main-bg);
+            color: #fff;
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0; padding: 0; overflow-x: hidden;
+        }
+
+        .scrolling-watermark {
+            position: fixed;
+            top: 25%;
+            left: -5%;
+            font-family: 'Oswald', sans-serif;
+            font-size: 15vw;
+            color: rgba(0, 210, 255, 0.02);
+            z-index: -1;
+            white-space: nowrap;
+            pointer-events: none;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .back-nav {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1000;
+        }
+        .back-btn {
+            color: var(--blue-neon);
+            text-decoration: none;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border: 1px solid var(--blue-neon);
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            background: rgba(0, 210, 255, 0.05);
+        }
+        .back-btn:hover {
+            background: var(--blue-neon);
+            color: #000;
+            box-shadow: 0 0 20px var(--blue-glow);
+        }
+
+        .container { max-width: 1000px; padding-top: 150px; padding-bottom: 100px; }
+        
+        .header-section { margin-bottom: 80px; }
+        .type-code {
+            font-family: 'Oswald', sans-serif;
+            font-size: 12rem;
+            line-height: 1;
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff, var(--blue-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            
+            transition: all 0.5s var(--ease);
+            
+            cursor: pointer;
+            
+            transform-origin: center; 
+            display: inline-block;
+        }
+
+        /* 新增這整個 hover 區塊 */
+        .type-code:hover {
+            transform: scale(1.1);
+            
+            text-shadow: 0 0 20px var(--blue-neon), 0 0 40px var(--blue-glow);
+        }
+        .section-title {
+            font-size: 1.5rem;
+            letter-spacing: 10px;
+            color: var(--blue-neon);
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        /* 分析圖表卡片 */
+        .chart-card {
+            background: var(--sub-bg);
+            border: 1px solid #222;
+            padding: 40px;
+            margin-bottom: 50px;
+            border-left: 5px solid var(--blue-neon);
+        }
+
+        .bar-container { margin-bottom: 25px; }
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .bar-outer {
+            height: 12px;
+            background: #222;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue-deep), var(--blue-neon));
+            box-shadow: 0 0 15px var(--blue-glow);
+            width: 0%;
+            transition: width 1.5s var(--ease);
+        }
+
+        /* 類型詳解 */
+        .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .detail-item {
+            background: #151515;
+            padding: 30px;
+            border: 1px solid #222;
+            transition: 0.4s;
+        }
+        .detail-item:hover {
+            border-color: var(--blue-neon);
+            transform: translateY(-5px);
+        }
+        .detail-item h4 {
+            color: var(--blue-neon);
+            font-weight: 900;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .detail-item p { color: #aaa; line-height: 1.8; font-size: 0.95rem; }
+
+        footer { padding: 80px 0; text-align: center; border-top: 1px solid #222; font-size: 0.7rem; letter-spacing: 3px; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="scrolling-watermark" id="watermark">Holland code</div>
+
+    <nav class="back-nav">
+        <a href="../good2.html" class="back-btn">← HOME</a>
+    </nav>
+
+    <main class="container">
+        <div class="header-section">
+            <p class="section-title">職業興趣簡介</p>
+            <h1 class="type-code">CRE</h1>
+            <p class="lead text-secondary">事務型 (C) · 實用型 (R) · 企業型 (E)</p>
+        </div>
+
+        <section class="chart-card">
+            <h3 class="mb-4" style="font-weight: 900;">診斷分數與 PR 值</h3>
+            
+            <div class="bar-container">
+                <div class="bar-label">
+                    <span>事務型 (C) - 謹慎精確</span>
+                    <span>9 分 / PR 90</span>
+                </div>
+                <div class="bar-outer">
+                    <div class="bar-inner" style="width: 75%;"></div>
+                </div>
+            </div>
+
+            <div class="bar-container">
+                <div class="bar-label">
+                    <span>實用型 (R) - 動手操作</span>
+                    <span>8 分 / PR 88</span>
+                </div>
+                <div class="bar-outer">
+                    <div class="bar-inner" style="width: 66%;"></div>
+                </div>
+            </div>
+
+            <div class="bar-container">
+                <div class="bar-label">
+                    <span>企業型 (E) - 領導冒險</span>
+                    <span>5 分 / PR 64</span>
+                </div>
+                <div class="bar-outer">
+                    <div class="bar-inner" style="width: 42%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-5">
+            <h3 class="mb-4 section-title">性格深度解析</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <h4>C 事務型</h4>
+                    <p>個性謹慎、做事講求規矩與精確。樂於處理資料、計算及文書，喜歡在具有明確規範的環境下工作。</p>
+                </div>
+                <div class="detail-item">
+                    <h4>R 實用型</h4>
+                    <p>喜歡講求實際，動手操作、按部就班完成實際用途物品等技術性、體力性的工作。</p>
+                </div>
+                <div class="detail-item">
+                    <h4>E 企業型</h4>
+                    <p>喜歡選擇具有冒險性、支配性、需要熱忱與精力的工作，喜歡進行策劃與領導。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="chart-card">
+            <h3 class="mb-4" style="font-weight: 900;">職涯類型匹配 (Top Interest)</h3>
+            <p class="text-secondary mb-4">根據測驗結果，您在以下領域展現最高興趣：</p>
+            <ul>
+                <li class="mb-2"><strong>企業經營管理：</strong> 興趣強度 3.50 / PR 94</li>
+                <li class="mb-2"><strong>資訊科技：</strong> 興趣強度 3.20 / PR 89</li>
+                <li class="mb-2"><strong>建築營造：</strong> 興趣強度 2.90 / PR 79</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer><p>©HUANG SHIH-HAO PORTFOLIO. ALL RIGHTS RESERVED.</p></footer>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);            
+            const watermark = document.getElementById('watermark');
+            const moveAmount = scrollPercent * 150;
+            watermark.style.transform = `translateX(${moveAmount}px)`;
+        });
+
+        window.addEventListener('load', () => {
+            const bars = document.querySelectorAll('.bar-inner');
+        });
+    </script>
+</body>
+</html>
