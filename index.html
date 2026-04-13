@@ -284,24 +284,6 @@
             to { opacity: 0.5; transform: translateX(0); }
         }
 
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 3.5rem;
-                line-height: 1.1;
-                letter-spacing: 5px;
-                margin-top: 15px;
-            }
-
-            .hero-content p {
-                font-size: 0.9rem;
-                letter-spacing: 5px;
-            }
-
-            .hero {
-                padding-left: 5%;
-            }
-        }
-
         @media (max-width: 375px) {
             .hero-content h1 {
                 font-size: 2.8rem;
@@ -309,6 +291,19 @@
         }
 
         @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 3.5rem;
+                line-height: 1.1;
+                letter-spacing: 5px;
+                margin-top: 15px;
+            }
+            .hero-content p {
+                font-size: 0.9rem;
+                letter-spacing: 5px;
+            }
+            .hero {
+                padding-left: 5%;
+            }
 
             .photo-caption {
                 font-size: 1.5rem !important;
@@ -317,10 +312,47 @@
                 width: 90%;
                 margin: 0 auto;
             }
-
             .photo-circle-container {
                 width: 250px;
                 height: 250px;
+            }
+
+            .big-circle {
+                width: 150vw !important; 
+                height: 150vw !important;
+                top: -25vw !important;
+                right: -25vw !important;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .menu-content {
+                padding-left: 20% !important; 
+                margin-top: 50px !important;
+            }
+
+            .menu-item {
+                margin: 30px 0 !important;
+            }
+
+            .menu-item a {
+                font-size: 2.2rem !important;
+                letter-spacing: 3px !important;
+            }
+
+            .close-x {
+                top: 25% !important;
+                right: 25% !important;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            .menu-item a {
+                font-size: 1.8rem !important;
             }
         }
 
